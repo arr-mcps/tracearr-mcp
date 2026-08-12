@@ -1,43 +1,23 @@
-# AGENTS.md
+# AGENTS.md — tracearr-mcp
 
-Conventions for working in this repository. Follow these when making changes.
+MCP server exposing Tracearr's Public API v2 (REST, read-only) as tools so an LLM can query Plex, Jellyfin, and Emby monitoring data: watch history, active streams, media, users, libraries, and recently added items. Uses FastMCP, `uv` for deps.
 
-## Project
+## Testing
+- Offline suite: `make test` (or `uv run pytest`)
+- Live integration (needs `TRACEARR_URL`/`TRACEARR_API_KEY`): `make test-integration`
 
-`tracearr-mcp` — a single-file Python MCP server that exposes [Tracearr](https://docs.tracearr.com/api)'s Public API v2 (REST, read-only) as MCP tools. Built on [FastMCP](https://gofastmcp.com), ported from the `dashy-mcp` template.
+## Release workflow
+Always use the `make bump-*` targets to bump the version (`uv version --bump patch|minor|major`), which updates `pyproject.toml` and `uv.lock` together. Do NOT edit the version by hand.
 
-Layout:
+- Bump: `make bump-patch` (or `bump-minor` / `bump-major`)
+- Commit message is **just the version**, e.g. `0.1.2` — nothing else.
+- Tag it `v<version>` (e.g. `v0.1.2`).
+- Push main and the tag:
+  ```
+  git push origin main
+  git push origin v<version>
+  ```
+- This server is not yet deployed to the Proxmox host or the christopfarr project copy. When it is, follow the pattern in the other `-mcp` servers: push tags, sync the project copy, then `ssh root@192.168.50.3 -- 'cd /root/tracearr-mcp && git fetch origin && git reset --hard origin/main && uv tool install --force .'`.
 
-- `tracearr_mcp.py` — all MCP tools + client. One tool per API endpoint (13 total), all `readOnlyHint=True`. Base path `/api/v2/public` is hardcoded in `build_client`.
-- `tests/test_tools.py` — offline suite (mock HTTP via `httpx.MockTransport`); no network.
-- `tests/test_live.py` — integration suite against a real instance; gated on `TRACEARR_URL`/`TRACEARR_API_KEY`.
-- `pyproject.toml` — package metadata, script entrypoint `tracearr-mcp`.
-- `Makefile` — command wrappers.
-- `.github/workflows/release.yml` — publishes a GitHub Release on a `v*` tag push.
-
-## Commands
-
-Use these to verify work (mirrored in the `Makefile`):
-
-```bash
-make sync          # uv sync (install dependencies)
-make test          # offline test suite (uv run pytest)
-make test-integration  # tests against a live Tracearr (needs TRACEARR_URL/TRACEARR_API_KEY)
-make build         # build wheel + sdist into dist/
-```
-
-Lint/typecheck: none configured for this project. `pytest` is the only gate — always run `make test` after changes.
-
-## Release / versioning
-
-- Version lives in `pyproject.toml`. Current: `0.0.0`.
-- Bump with `make bump-patch` / `bump-minor` / `bump-major` (`uv version --bump ...`), which also updates `uv.lock`.
-- Flow: bump, commit, then `git tag v0.0.x && git push --tags`. The release workflow builds and publishes automatically.
-
-## Repository conventions
-
-- Default branch: `main`.
-- License: MIT, `Copyright (c) 2026 SavageCore`.
-- Mirror upstream conventions from `dashy-mcp` where possible (Makefile, dependabot, release workflow, test patterns).
-- All API tools are read-only — never introduce a tool that writes or deletes (the Tracearr public API has no write surface).
-- Keep the whole server in `tracearr_mcp.py` unless the module outgrows it; add tools one per endpoint with the `tracearr_` prefix.
+## Read-only note
+The Tracearr Public API has no write surface. Every tool is read-only (`readOnlyHint=True`) — never introduce a tool that writes or deletes. Keep the whole server in `tracearr_mcp.py` unless it outgrows it; add tools one per endpoint with the `tracearr_` prefix. Base path `/api/v2/public` is hardcoded in `build_client`.
