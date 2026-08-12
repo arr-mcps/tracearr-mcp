@@ -17,7 +17,12 @@ Always use the `make bump-*` targets to bump the version (`uv version --bump pat
   git push origin main
   git push origin v<version>
   ```
-- This server is not yet deployed to the Proxmox host or the christopfarr project copy. When it is, follow the pattern in the other `-mcp` servers: push tags, sync the project copy, then `ssh root@192.168.50.3 -- 'cd /root/tracearr-mcp && git fetch origin && git reset --hard origin/main && uv tool install --force .'`.
+- Deploy to the Proxmox host (root SSH key): pull the repo then reinstall the uv tool:
+  ```
+  ssh root@192.168.50.3 -- 'cd /root/tracearr-mcp && git fetch origin && git reset --hard origin/main'
+  ssh root@192.168.50.3 -- 'cd /root/tracearr-mcp && uv tool install --force .'
+  ```
+  The host runs it via `uv tool install` → `/root/.local/bin/tracearr-mcp` (not from the repo). There is no `/home/savagecore/Documents/christopfarr/mcp/tracearr-mcp` copy.
 
 ## Read-only note
 The Tracearr Public API has no write surface. Every tool is read-only (`readOnlyHint=True`) — never introduce a tool that writes or deletes. Keep the whole server in `tracearr_mcp.py` unless it outgrows it; add tools one per endpoint with the `tracearr_` prefix. Base path `/api/v2/public` is hardcoded in `build_client`.
