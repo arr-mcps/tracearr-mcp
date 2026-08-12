@@ -1,5 +1,6 @@
 # tracearr-mcp
 
+Part of the [arr-mcps](https://github.com/SavageCore/arr-mcps) collection.
 MCP server exposing [Tracearr](https://docs.tracearr.com/api)'s Public API v2
 (REST, read-only) as tools, so an LLM can query your Plex, Jellyfin, and Emby
 monitoring data: watch history, active streams, media, users, libraries, and
