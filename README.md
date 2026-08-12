@@ -5,8 +5,7 @@ MCP server exposing [Tracearr](https://docs.tracearr.com/api)'s Public API v2
 monitoring data: watch history, active streams, media, users, libraries, and
 recently added items.
 
-Built with [FastMCP](https://gofastmcp.com), ported from the `dashy-mcp`
-template.
+Built with [FastMCP](https://gofastmcp.com).
 
 ## Enabling the API on your Tracearr server
 
