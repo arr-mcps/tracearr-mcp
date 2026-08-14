@@ -1,6 +1,6 @@
 # tracearr-mcp
 
-Part of the [arr-mcps](https://github.com/SavageCore/arr-mcps) collection.
+Part of the [arr-mcps](https://github.com/arr-mcps/arr-mcps) collection.
 MCP server exposing [Tracearr](https://docs.tracearr.com/api)'s Public API v2
 (REST, read-only) as tools, so an LLM can query your Plex, Jellyfin, and Emby
 monitoring data: watch history, active streams, media, users, libraries, and
@@ -16,7 +16,7 @@ the [API reference](https://docs.tracearr.com/api) for details.
 
 ## Install
 
-Download a wheel from the [latest release](https://github.com/SavageCore/tracearr-mcp/releases/latest)
+Download a wheel from the [latest release](https://github.com/arr-mcps/tracearr-mcp/releases/latest)
 and install it as a `uv` tool (no repo checkout needed):
 
 ```bash
@@ -99,7 +99,7 @@ make help  # list all commands
 | `make clean` | Remove build artifacts |
 
 The release workflow (`.github/workflows/release.yml`) builds and publishes to
-[Releases](https://github.com/SavageCore/tracearr-mcp/releases) whenever a `v*`
+[Releases](https://github.com/arr-mcps/tracearr-mcp/releases) whenever a `v*`
 tag is pushed - so the usual flow is `make bump-patch`, commit, then tag and
 push.
 
